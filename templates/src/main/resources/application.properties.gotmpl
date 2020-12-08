@@ -1,0 +1,15 @@
+spring.application.name={{ .Metadata.ArtifactID }}
+
+################ Logging #####################
+logging.file.name=logs/{{ .Metadata.ArtifactID }}.log
+logging.level.web=INFO
+logging.level.org.testcontainers=WARN
+
+################ Actuator #####################
+management.endpoints.web.exposure.include=health,info
+
+################ Database #####################
+spring.jpa.show-sql=true
+spring.jpa.open-in-view=false
+spring.jpa.properties.hibernate.format_sql=true
+spring.jpa.properties.hibernate.jdbc.lob.non_contextual_creation=true

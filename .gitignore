@@ -1,2 +1,5 @@
 .idea
 *.iml
+
+/demo-app
+/spring-boot-cli

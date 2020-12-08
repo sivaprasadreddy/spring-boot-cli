@@ -1,4 +1,4 @@
-package main
+package app
 
 type GeneratorConfig struct {
 	Metadata ProjectMetadata
@@ -9,4 +9,5 @@ type ProjectMetadata struct {
 	GroupID            string
 	ArtifactID         string
 	ApplicationVersion string
+	BasePackage        string
 }
