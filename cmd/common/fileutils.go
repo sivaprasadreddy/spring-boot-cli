@@ -6,7 +6,18 @@ import (
 	"io/ioutil"
 	"os"
 	"path"
+	"path/filepath"
 )
+
+func CreateFile(filePath string) *os.File {
+	parent := filepath.Dir(filePath)
+	_ = os.MkdirAll(parent, 0700)
+	f, err := os.Create(filePath)
+	if err != nil {
+		panic(err)
+	}
+	return f
+}
 
 // CopyFile copies a single file from src to dst
 func CopyFile(src, dst string) error {

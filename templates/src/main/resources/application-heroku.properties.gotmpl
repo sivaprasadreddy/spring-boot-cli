@@ -1,0 +1,8 @@
+{{- if .Options.UseRDBMS }}
+################ Database #####################
+spring.datasource.url=${JDBC_DATABASE_URL}
+{{ end -}}
+{{- if eq .Options.ProdDbType "postgresql" }}spring.datasource.driver-class-name=org.postgresql.Driver{{ end -}}
+{{- if eq .Options.ProdDbType "mysql" }}spring.datasource.driver-class-name=com.mysql.jdbc.Driver{{ end -}}
+{{- if eq .Options.ProdDbType "mariadb" }}spring.datasource.driver-class-name=org.mariadb.jdbc.Driver{{ end -}}
+

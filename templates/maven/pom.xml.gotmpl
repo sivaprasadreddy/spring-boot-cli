@@ -18,7 +18,10 @@
 	<properties>
 		<java.version>11</java.version>
 		<spring-cloud.version>2020.0.0-M6</spring-cloud.version>
-		<testcontainers.version>1.15.0</testcontainers.version>
+		<testcontainers.version>1.15.1</testcontainers.version>
+		<swagger.version>3.0.0</swagger.version>
+		<commons-lang3.version>3.11</commons-lang3.version>
+        <commons-io.version>2.8.0</commons-io.version>
 	</properties>
 
   	<dependencies>
@@ -46,6 +49,79 @@
             <artifactId>lombok</artifactId>
             <optional>true</optional>
         </dependency>
+        {{- if .Options.UseRDBMS }}
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+        </dependency>
+        {{ end -}}
+        {{- if eq .Options.ProdDbType "postgresql" }}
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        {{ end -}}
+        {{- if eq .Options.ProdDbType "mysql" }}
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        {{ end -}}
+        {{- if eq .Options.ProdDbType "mariadb" }}
+        <dependency>
+            <groupId>org.mariadb.jdbc</groupId>
+            <artifactId>mariadb-java-client</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        {{ end -}}
+        {{- if eq .Options.TestDbType "h2" }}
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        {{ end -}}
+        {{- if eq .Options.TestDbType "hsqldb" }}
+        <dependency>
+            <groupId>org.hsqldb</groupId>
+            <artifactId>hsqldb</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        {{ end -}}
+        {{- if eq .Options.DBMigrationType "flyway"}}
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-core</artifactId>
+        </dependency>
+        {{ end -}}
+        {{- if eq .Options.DBMigrationType "liquibase"}}
+        <dependency>
+            <groupId>org.liquibase</groupId>
+            <artifactId>liquibase-core</artifactId>
+        </dependency>
+        {{ end -}}
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger2</artifactId>
+            <version>${swagger.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger-ui</artifactId>
+            <version>${swagger.version}</version>
+        </dependency>
+        <dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>${commons-lang3.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>${commons-io.version}</version>
+		</dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
@@ -56,11 +132,27 @@
             <artifactId>junit-jupiter</artifactId>
             <scope>test</scope>
         </dependency>
+        {{- if eq .Options.ProdDbType "postgresql" }}
         <dependency>
             <groupId>org.testcontainers</groupId>
-            <artifactId>testcontainers</artifactId>
+            <artifactId>postgresql</artifactId>
             <scope>test</scope>
         </dependency>
+        {{ end -}}
+        {{- if eq .Options.ProdDbType "mysql" }}
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>mysql</artifactId>
+            <scope>test</scope>
+        </dependency>
+        {{ end -}}
+        {{- if eq .Options.ProdDbType "mariadb" }}
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>mariadb</artifactId>
+            <scope>test</scope>
+        </dependency>
+        {{ end -}}
     </dependencies>
 
 	<dependencyManagement>

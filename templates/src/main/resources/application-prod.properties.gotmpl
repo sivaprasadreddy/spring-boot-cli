@@ -1,0 +1,23 @@
+{{- if .Options.UseRDBMS }}
+################ Database #####################
+{{ end -}}
+{{- if eq .Options.ProdDbType "postgresql" }}
+spring.datasource.driver-class-name=org.postgresql.Driver
+spring.datasource.url=jdbc:postgresql://localhost:5432/appdb
+{{ end -}}
+{{- if eq .Options.ProdDbType "mysql" }}
+spring.datasource.driver-class-name=com.mysql.jdbc.Driver
+spring.datasource.url=jdbc:mysql://localhost:3306/appdb
+{{ end -}}
+{{- if eq .Options.ProdDbType "mariadb" }}
+spring.datasource.driver-class-name=org.mariadb.jdbc.Driver
+spring.datasource.url=jdbc:mariadb://localhost:3306/appdb
+{{ end -}}
+{{- if .Options.UseRDBMS }}
+spring.datasource.username=root
+spring.datasource.password=secret
+{{ end -}}
+################ Actuator #####################
+management.endpoints.web.exposure.include=health,info,loggers
+management.endpoint.health.show-details=when_authorized
+management.endpoint.health.roles=ROLE_ADMIN

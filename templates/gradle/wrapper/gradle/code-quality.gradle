@@ -1,0 +1,77 @@
+apply plugin: 'checkstyle'
+apply plugin: 'pmd'
+apply plugin: 'jacoco'
+apply plugin: "org.sonarqube"
+
+def jacocoMinCoverageRequired = 0.65
+
+checkstyle {
+    toolVersion "${checkstyle_version}"
+    maxWarnings = 0
+    configFile = file("${project.rootDir}/build-config/checkstyle/checkstyle.xml")
+    sourceSets = [sourceSets.main]
+}
+
+pmd {
+    toolVersion = "${pmd_version}"
+    consoleOutput = true
+    ruleSets = []
+    ruleSetFiles = files("${project.rootDir}/build-config/pmd/pmd-ruleset.xml")
+    sourceSets = [sourceSets.main]
+}
+
+jacoco {
+    toolVersion = "${jacoco_plugin_version}"
+}
+
+def jacocoExcludes = [
+    'com/mycompany/**/utils/*'
+]
+
+jacocoTestReport {
+    executionData tasks.withType(Test)
+    classDirectories.from = files(sourceSets.main.output.classesDirs)
+    sourceDirectories.from = files(sourceSets.main.java.srcDirs)
+
+    afterEvaluate {
+        getClassDirectories().setFrom(files(classDirectories.files.collect {
+            fileTree(dir: it, exclude: jacocoExcludes)
+        }))
+    }
+
+    reports {
+        xml.enabled = true
+        html.enabled = true
+    }
+}
+
+jacocoTestCoverageVerification {
+    executionData fileTree(project.buildDir.absolutePath).include("jacoco/*.exec")
+
+    violationRules {
+        rule {
+            limit {
+                counter = 'LINE'
+                value = 'COVEREDRATIO'
+                minimum = jacocoMinCoverageRequired
+            }
+            excludes = jacocoExcludes
+        }
+    }
+}
+
+integrationTest.finalizedBy jacocoTestReport
+check.dependsOn jacocoTestCoverageVerification
+
+file("sonar-project.properties").withReader {
+    Properties sonarProperties = new Properties()
+    sonarProperties.load(it)
+
+    sonarProperties.each { key, value ->
+        sonarqube {
+            properties {
+                property key, value
+            }
+        }
+    }
+}

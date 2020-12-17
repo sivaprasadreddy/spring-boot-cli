@@ -1,0 +1,20 @@
+pipeline {
+    agent any
+
+    triggers {
+            pollSCM('* * * * *')
+    }
+
+    environment {
+        APPLICATION_NAME = '{{ .Metadata.ArtifactID }}'
+    }
+
+    stages {
+        stage('Build') {
+            steps {
+                  {{ if eq .Metadata.BuildTool "gradle" -}}sh './gradlew clean build'{{- end }}
+                  {{ if eq .Metadata.BuildTool "maven" -}}sh './mvnw clean install'{{- end }}
+            }
+        }
+    }
+}

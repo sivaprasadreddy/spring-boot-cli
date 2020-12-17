@@ -1,5 +1,7 @@
 .idea
 *.iml
 
-/demo-app
+/output
+/myapp
 /spring-boot-cli
+.spring-boot-cli.json

@@ -1,0 +1,45 @@
+package {{ .Metadata.BasePackage }}.common;
+
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
+{{- if eq .Options.ProdDbType "postgresql" }}
+import org.testcontainers.containers.PostgreSQLContainer;
+{{ end -}}
+{{- if eq .Options.ProdDbType "mysql" }}
+import org.testcontainers.containers.MySQLContainer;
+{{ end -}}
+{{- if eq .Options.ProdDbType "mariadb" }}
+import org.testcontainers.containers.MariaDBContainer;
+{{ end }}
+public class TestContainersInitializer {
+{{ if eq .Options.ProdDbType "postgresql" }}
+    static PostgreSQLContainer<?> sqlContainer = new PostgreSQLContainer<>("postgres:12.3")
+        .withDatabaseName("integration-tests-db")
+        .withUsername("username")
+        .withPassword("password");
+{{ end -}}
+{{ if eq .Options.ProdDbType "mysql" }}
+    static MySQLContainer<?> sqlContainer = new MySQLContainer<>("mysql:5.7")
+            .withDatabaseName("integration-tests-db")
+            .withUsername("username")
+            .withPassword("password");
+{{ end -}}
+{{ if eq .Options.ProdDbType "mariadb" }}
+    static MariaDBContainer<?> sqlContainer = new MariaDBContainer<>("mariadb:10.3")
+            .withDatabaseName("integration-tests-db")
+            .withUsername("username")
+            .withPassword("password");
+{{ end -}}
+{{ if .Options.UseRDBMS }}
+    static {
+        sqlContainer.start();
+    }
+
+    @DynamicPropertySource
+    static void postgresProperties(DynamicPropertyRegistry registry) {
+        registry.add("spring.datasource.url", sqlContainer::getJdbcUrl);
+        registry.add("spring.datasource.username", sqlContainer::getUsername);
+        registry.add("spring.datasource.password", sqlContainer::getPassword);
+    }
+{{ end -}}
+}

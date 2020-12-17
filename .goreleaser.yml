@@ -1,6 +1,7 @@
 before:
   hooks:
     - go mod download
+    - zip -r templates.zip templates
 builds:
 - env:
     - CGO_ENABLED=0
@@ -18,6 +19,8 @@ archives:
       linux: Linux
       windows: Windows
       amd64: x86_64
+    files:
+      - templates.zip
 checksum:
   name_template: 'checksums.txt'
 snapshot:

@@ -1,0 +1,36 @@
+version: '3.8'
+services:
+
+{{- if eq .Options.ProdDbType "postgresql" }}
+  postgresqldb:
+    image: postgres:12.3
+    environment:
+      - POSTGRES_USER=siva
+      - POSTGRES_PASSWORD=secret
+      - POSTGRES_DB=appdb
+    ports:
+      - "5432:5432"
+{{ end -}}
+{{- if eq .Options.ProdDbType "mysql" }}
+  mysqldb:
+    image: mysql:5.7
+    environment:
+      - MYSQL_DATABASE=appdb
+      - MYSQL_USER=siva
+      - MYSQL_PASSWORD=secret
+      - MYSQL_ROOT_PASSWORD=root
+    ports:
+      - "3306:3306"
+
+{{ end -}}
+{{- if eq .Options.ProdDbType "mariadb" }}
+  mariadb:
+    image: mariadb
+    environment:
+      - MYSQL_DATABASE=appdb
+      - MYSQL_USER=siva
+      - MYSQL_PASSWORD=secret
+      - MYSQL_ROOT_PASSWORD=root
+    ports:
+      - "3306:3306"
+{{ end -}}

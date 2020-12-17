@@ -51,6 +51,10 @@ jobs:
         goarch: [ amd64 ]
     steps:
       - uses: actions/checkout@v2
+      - name: Zip Templates
+        uses: montudor/action-zip@v0.1.1
+        with:
+          args: zip -qq -r templates.zip templates
       - uses: wangyoucao577/go-release-action@v1.11
         with:
           github_token: ${{ secrets.GH_TOKEN }}
@@ -58,4 +62,4 @@ jobs:
           goarch: ${{ matrix.goarch }}
           release_tag: dev
           overwrite: true
-          extra_files: README.md
+          extra_files: README.md templates.zip

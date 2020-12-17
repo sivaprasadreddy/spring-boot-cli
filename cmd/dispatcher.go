@@ -1,15 +1,14 @@
 package cmd
 
 import (
-	"fmt"
-	"github.com/AlecAivazis/survey/v2"
-	"github.com/AlecAivazis/survey/v2/terminal"
 	"github.com/sivaprasadreddy/spring-boot-cli/cmd/app"
-	"github.com/spf13/cobra"
-	"os"
-	"strings"
 )
 
+func invokeGenerator() {
+	app.Run()
+}
+
+/*
 func invokeGenerator(cmd *cobra.Command, args []string) error {
 	generatorType := cmd.Flag("type").Value.String()
 	if generatorType == "" {
@@ -56,3 +55,4 @@ func getAppTypeAnswers() (GeneratorType, error) {
 	}
 	return generatorType, nil
 }
+*/

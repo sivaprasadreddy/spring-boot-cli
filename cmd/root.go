@@ -2,10 +2,11 @@ package cmd
 
 import (
 	"fmt"
+	"github.com/sivaprasadreddy/spring-boot-cli/cmd/app"
 	"github.com/spf13/cobra"
 	"os"
 
-	homedir "github.com/mitchellh/go-homedir"
+	"github.com/mitchellh/go-homedir"
 	"github.com/spf13/viper"
 )
 
@@ -20,7 +21,7 @@ var rootCmd = &cobra.Command{
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
 	Run: func(cmd *cobra.Command, args []string) {
-		invokeGenerator(cmd, args)
+		invokeGenerator()
 	},
 }
 
@@ -39,7 +40,7 @@ func init() {
 	// Here you will define your flags and configuration settings.
 	// Cobra supports persistent flags, which, if defined here,
 	// will be global for your application.
-
+	rootCmd.Version = app.VERSION
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.spring-boot-cli.yaml)")
 
 	// Cobra also supports local flags, which will only run

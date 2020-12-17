@@ -1,0 +1,134 @@
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath "com.avast.gradle:gradle-docker-compose-plugin:${docker_compose_plugin_version}"
+        classpath "org.owasp:dependency-check-gradle:${owasp_plugin_version}"
+    }
+}
+
+plugins {
+    id "java-library"
+    id "org.springframework.boot" version "${spring_boot_version}"
+    id "io.spring.dependency-management" version "${spring_dependency_management_version}"
+    id "com.gorylenko.gradle-git-properties" version "${git_properties_plugin_version}"
+    id "com.github.ben-manes.versions" version "${versions_plugin_version}"
+    id "com.github.spotbugs" version "${spotbugs_plugin_version}" apply false
+    id "org.sonarqube" version "${sonarqube_plugin_version}" apply false
+}
+apply plugin: "idea"
+apply plugin: "docker-compose"
+apply from: "gradle/tests.gradle"
+apply from: "gradle/code-quality.gradle"
+//apply from: "gradle/owasp.gradle"
+
+group = "{{ .Metadata.GroupID }}"
+version = "{{ .Metadata.ApplicationVersion }}"
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
+}
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+repositories {
+    mavenCentral()
+    maven { url 'https://repo.spring.io/milestone' }
+}
+
+dependencies {
+    implementation "org.springframework.boot:spring-boot-starter-actuator"
+    implementation "org.springframework.boot:spring-boot-starter-validation"
+    implementation "org.springframework.boot:spring-boot-starter-web"
+    {{- if .Options.UseRDBMS }}
+    implementation "org.springframework.boot:spring-boot-starter-data-jpa"
+    {{ end -}}
+    {{- if eq .Options.ProdDbType "postgresql" }}
+    runtimeOnly "org.postgresql:postgresql"
+    {{ end -}}
+    {{- if eq .Options.ProdDbType "mysql" }}
+    runtimeOnly "mysql:mysql-connector-java"
+    {{ end -}}
+    {{- if eq .Options.ProdDbType "mariadb" }}
+    runtimeOnly "org.mariadb.jdbc:mariadb-java-client"
+    {{ end -}}
+    {{- if eq .Options.TestDbType "h2" }}
+    runtimeOnly "com.h2database:h2"
+    {{ end -}}
+    {{- if eq .Options.TestDbType "hsqldb" }}
+    runtimeOnly "org.hsqldb:hsqldb"
+    {{ end -}}
+    {{- if eq .Options.DBMigrationType "flyway"}}
+    implementation "org.flywaydb:flyway-core"
+    {{ end -}}
+    {{- if eq .Options.DBMigrationType "liquibase"}}
+    implementation "org.liquibase:liquibase-core"
+    {{ end -}}
+
+    compileOnly "org.projectlombok:lombok"
+    testImplementation "org.projectlombok:lombok"
+    annotationProcessor "org.projectlombok:lombok"
+    developmentOnly "org.springframework.boot:spring-boot-devtools"
+    annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
+
+    implementation "io.springfox:springfox-swagger2:${swagger_version}"
+    implementation "io.springfox:springfox-swagger-ui:${swagger_version}"
+    implementation "org.apache.commons:commons-lang3:${commons_lang_version}"
+    implementation "commons-io:commons-io:${commons_io_version}"
+
+    testImplementation("org.springframework.boot:spring-boot-starter-test") {
+        exclude group: "org.junit.vintage", module: "junit-vintage-engine"
+    }
+    testImplementation "org.testcontainers:junit-jupiter"
+    {{- if eq .Options.ProdDbType "postgresql" }}
+    testImplementation "org.testcontainers:postgresql"
+    {{ end -}}
+    {{- if eq .Options.ProdDbType "mysql" }}
+    testImplementation "org.testcontainers:mysql"
+    {{ end -}}
+    {{- if eq .Options.ProdDbType "mariadb" }}
+    testImplementation "org.testcontainers:mariadb"
+    {{ end -}}
+    {{ "\n" }}
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${spring_cloud_version}"
+        mavenBom "org.testcontainers:testcontainers-bom:${testcontainers_version}"
+    }
+}
+
+springBoot {
+    buildInfo()
+}
+
+bootJar {
+}
+
+bootBuildImage {
+    imageName = "YOUR_DOCKERHUB_USERNAME/{{ .Metadata.ArtifactID }}"
+}
+
+dockerCompose {
+    useComposeFiles = ["docker/docker-compose.yml"]
+}
+
+compileJava.dependsOn processResources
+processResources.dependsOn bootBuildInfo
+
+bootRun {
+    args = ["--spring.profiles.active=dev"]
+}
+bootRun.dependsOn composeUp
+
+gitProperties {
+    failOnNoGitDirectory = false
+    keys = ["git.branch", "git.commit.id.abbrev", "git.commit.id.describe"]
+}

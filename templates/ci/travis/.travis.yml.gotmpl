@@ -1,0 +1,14 @@
+language: java
+jdk: openjdk11
+sudo: false
+
+services:
+  - docker
+
+script:
+  {{- if eq .Metadata.BuildTool "gradle" }}
+  - ./gradlew clean build
+  {{ end -}}
+  {{- if eq .Metadata.BuildTool "maven" }}
+  - ./mvnw clean install
+  {{ end -}}
