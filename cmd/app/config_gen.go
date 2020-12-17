@@ -31,17 +31,13 @@ func (p ProjectGenerator) generateConfig() {
 	p.generateConfigCode(paths, templateMap)
 
 	err := common.CopyDir(p.templatesDir+"/build-config", p.targetDir+"/build-config")
-	if err != nil {
-		panic(err)
-	}
+	common.PanicIfErr(err)
 }
 
 func (p ProjectGenerator) generateConfigCode(paths []string, templateMap map[string]string) {
 	rootDir := p.targetDir + "/"
 	templates, err := template.ParseFiles(paths...)
-	if err != nil {
-		panic(err)
-	}
+	common.PanicIfErr(err)
 	for tmpl, filePath := range templateMap {
 		p.createFromTemplate(templates, tmpl, rootDir+filePath)
 	}

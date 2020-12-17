@@ -31,13 +31,9 @@ func (p ProjectGenerator) GenerateProject() (err error) {
 func (p ProjectGenerator) cleanAndInitProjectDir() {
 	targetDir := p.targetDir
 	err := os.RemoveAll(targetDir + "/")
-	if err != nil {
-		panic(err)
-	}
+	common.PanicIfErr(err)
 	err = os.MkdirAll(targetDir+"/", 0700)
-	if err != nil {
-		panic(err)
-	}
+	common.PanicIfErr(err)
 }
 
 func (p ProjectGenerator) generateBuildConfig() {
@@ -51,7 +47,5 @@ func (p ProjectGenerator) generateBuildConfig() {
 func (p ProjectGenerator) createFromTemplate(templates *template.Template, templateName, filename string) {
 	f := common.CreateFile(filename)
 	err := templates.ExecuteTemplate(f, templateName, p.config)
-	if err != nil {
-		panic(err)
-	}
+	common.PanicIfErr(err)
 }

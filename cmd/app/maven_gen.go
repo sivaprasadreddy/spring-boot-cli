@@ -6,13 +6,9 @@ import (
 
 func (p ProjectGenerator) generateMavenConfig() {
 	err := common.CopyFile(p.templatesDir+"/maven/gitignore", p.targetDir+"/.gitignore")
-	if err != nil {
-		panic(err)
-	}
+	common.PanicIfErr(err)
 	err = common.CopyDir(p.templatesDir+"/maven/wrapper", p.targetDir)
-	if err != nil {
-		panic(err)
-	}
+	common.PanicIfErr(err)
 
 	paths := []string{
 		p.templatesDir + "/maven/pom.xml.gotmpl",

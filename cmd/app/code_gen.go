@@ -1,6 +1,7 @@
 package app
 
 import (
+	"github.com/sivaprasadreddy/spring-boot-cli/cmd/common"
 	"strings"
 	"text/template"
 )
@@ -83,9 +84,7 @@ func (p ProjectGenerator) generateSrcJavaCode(javaFolder string, paths []string,
 	basePackagePath := strings.ReplaceAll(p.config.Metadata.BasePackage, ".", "/")
 	testJavaRootDir := p.targetDir + "/" + javaFolder + "/" + basePackagePath + "/"
 	templates, err := template.ParseFiles(paths...)
-	if err != nil {
-		panic(err)
-	}
+	common.PanicIfErr(err)
 	for tmpl, filePath := range templateMap {
 		p.createFromTemplate(templates, tmpl, testJavaRootDir+filePath)
 	}
@@ -94,9 +93,7 @@ func (p ProjectGenerator) generateSrcJavaCode(javaFolder string, paths []string,
 func (p ProjectGenerator) generateSrcResourcesCode(resFolder string, paths []string, templateMap map[string]string) {
 	resRootDir := p.targetDir + "/" + resFolder + "/"
 	templates, err := template.ParseFiles(paths...)
-	if err != nil {
-		panic(err)
-	}
+	common.PanicIfErr(err)
 	for tmpl, filePath := range templateMap {
 		p.createFromTemplate(templates, tmpl, resRootDir+filePath)
 	}

@@ -4,13 +4,9 @@ import "github.com/sivaprasadreddy/spring-boot-cli/cmd/common"
 
 func (p ProjectGenerator) generateGradleConfig() {
 	err := common.CopyFile(p.templatesDir+"/gradle/gitignore", p.targetDir+"/.gitignore")
-	if err != nil {
-		panic(err)
-	}
+	common.PanicIfErr(err)
 	err = common.CopyDir(p.templatesDir+"/gradle/wrapper", p.targetDir)
-	if err != nil {
-		panic(err)
-	}
+	common.PanicIfErr(err)
 
 	paths := []string{
 		p.templatesDir + "/gradle/build.gradle.gotmpl",
