@@ -9,7 +9,10 @@ A utility to generate SpringBoot applications.
 
 Create Symlink to the current version:
 
-`ln $HOME/.sbcli/current/spring-boot-cli /usr/local/bin/sbcli`
+```
+$ ln $HOME/.sbcli/current/sbcli /usr/local/bin/sbcli
+$ sbcli --version
+```
 
 ### Windows
 
