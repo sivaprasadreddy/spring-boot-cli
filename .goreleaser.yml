@@ -14,11 +14,6 @@ builds:
 archives:
   - name_template: '{{ .ProjectName }}_{{ .Os }}_{{ .Arch }}'
     format: zip
-    replacements:
-      darwin: darwin
-      linux: linux
-      windows: windows
-      amd64: amd64
     files:
       - templates.zip
 checksum:
